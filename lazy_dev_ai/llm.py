@@ -8,7 +8,7 @@ import importlib.resources
 default_template=None
 client = None
 
-# Load default base template from resource package
+# Load default base template for use from an internal resource file
 with importlib.resources.open_text("lazy_dev_ai.templates", "default_base.txt") as file:
     default_template = Template(file.read())
 
@@ -28,7 +28,6 @@ class ChatGPTMessage(BaseModel):
 
 
 class CodeChangeResponse(BaseModel):
-    # Allow additional extra fields for greater flexibility
     model_config = ConfigDict(extra="allow")
     change_required:bool
     content:str|None = Field(None)
@@ -38,53 +37,48 @@ class CodeChangeResponse(BaseModel):
 
 def getClient(api_key:str=None, organization:str=None, project:str=None)->OpenAI:
     global client
+
+    # Create a client instance only if it hasn't been initialized before
     if client is None:
         client = OpenAI(
             api_key=api_key,
             organization=organization,
-            project = project,
+            project = project
             
         )
     return client
 
 
 def load_template(file: str | Path|None =None) -> Template:
+    # Use the default template if no specific file is given
     if file is None: 
-        # Return default template if no file is provided
         return default_template
-    # Convert the str file path to Path object
+    # Ensures the file path is valid and can be read
     file_path = Path(file)
-    
-    # Check and raise error if the file does not exist
     if not file_path.exists():
         raise FileNotFoundError(f"The file {file_path} does not exist.")
-    
-    # Open and read the file to create a template
+   
     with file_path.open("r", encoding="utf-8") as f:
         template_content = f.read()
     
-    # Return the new Template object
     return Template(template_content)
 
+
+
 def load_file(file:str | Path) -> str:
-    # Convert the string path to Path object and check existence
     file_path = Path(file)
-    
-    # Check and raise error if file does not exist
     if not file_path.exists():
         raise FileNotFoundError(f"The file {file_path} does not exist.")
-    
-    # Open and read the contents of the file
     with file_path.open("r", encoding="utf-8") as f:
         content = f.read()
-    
-    # Return the plain text content
     return content
+
 
 def write_file(file:str|Path, contents:str):
     file_path = Path(file)
     with file_path.open("w", encoding="utf-8") as f:
         f.write(contents)
+
 
 def apply_code_template(code_file:str|Path,prompt_file:str|Path=None,prompt:str=None,model: str = "gpt-4-turbo",template_file:str|Path=None)->CodeChangeResponse:
     if prompt is None and prompt_file is None:
