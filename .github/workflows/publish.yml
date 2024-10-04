@@ -1,0 +1,41 @@
+name: Publish to PyPI
+
+on:
+  # Trigger the workflow when a release is created
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      # Set up Python (use appropriate version if needed)
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # Adjust as needed
+
+      # Install Poetry
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "Poetry version:"
+          poetry --version
+
+      # Install dependencies and build the package
+      - name: Install dependencies
+        run: |
+          poetry install --no-dev
+          poetry build
+
+      # Publish the package to PyPI
+      - name: Publish to PyPI
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}  # Ensure your token is added to GitHub Secrets
+        run: |
+          poetry publish --no-interaction --username __token__ --password $POETRY_PYPI_TOKEN_PYPI
