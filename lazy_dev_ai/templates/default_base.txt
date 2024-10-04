@@ -1,0 +1,15 @@
+$prompt
+
+Based on your analysis, respond with a JSON object containing two fields:
+
+change_required: A boolean field indicating whether any changes are required.
+content: An optional field. If changes are required, provide the updated file here. If no changes are necessary, this field can be omitted or left empty.
+change_explanation: An optional field. If explanations to the changes are required, provide the explanation here. This field can be omitted or left empty.
+severity: A indication as to the severity of the suggested changes. Possible values are LOW, MEDIUM, HIGH, CRITICAL
+
+File content:
+
+$file_contents
+
+Respond with a JSON object only. Do not include explanations or commentary outside the JSON object.
+
