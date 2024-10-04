@@ -14,7 +14,13 @@ load_dotenv('.env.local', override=True)
 @click.option('--project', envvar='OPENAI_PROJECT', default=None, help='Project identifier (optional)')
 @click.option('--organization', envvar='OPENAI_ORGANIZATION', default=None, help='Organization identifier (optional)')
 def cli(api_key, project=None, organization=None):
-    """Initialize the CLI with options for API key, project, and organization."""
+    """Initialize the CLI environment.
+
+    Args:
+        api_key (str): The API key for authentication.
+        project (str, optional): The project identifier.
+        organization (str, optional): The organization identifier.
+    """
     if not api_key:
         click.echo("API key not provided. Use --api-key option or set API_KEY in environment variables or .env file.")
     getClient(api_key=api_key, project=project, organization=organization)
@@ -23,7 +29,11 @@ def cli(api_key, project=None, organization=None):
 @cli.command()
 @click.argument('paths', nargs=-1, type=click.Path(exists=True, path_type=Path))
 def improve_comments(paths):
-    """Improve or refactor comments in the specified code files using a model-based template."""
+    """Automatically improve or refactor comments in code files.
+
+    Args:
+        paths (Tuple[Path]): The paths to the code files needing comment improvements.
+    """
     client = getClient()
     prompt = load_default_prompt('comment')
 
@@ -34,7 +44,11 @@ def improve_comments(paths):
 @cli.command()
 @click.argument('paths', nargs=-1, type=click.Path(exists=True, path_type=Path))
 def generate_docstrings(paths):
-    """Generate docstrings for functions in the specified code files using a model-based template."""
+    """Automatically generate docstrings for functions in code files.
+
+    Args:
+        paths (Tuple[Path]): The paths to the code files needing docstrings.
+    """
     client = getClient()
     prompt = load_default_prompt('docstring')
 
