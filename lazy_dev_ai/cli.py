@@ -31,6 +31,16 @@ def improve_comments(paths):
         if f.is_file():
             click.echo(f"Applying template to {f.as_posix()}")
             apply_code_template(code_file=f, prompt=prompt)
+@cli.command()
+@click.argument('paths', nargs=-1, type=click.Path(exists=True, path_type=Path))
+def generate_docstrings(paths):
+    """Improve comments in the specified code files using a given template."""
+    client = getClient()
+    prompt = load_default_prompt('comment')
 
+    for f in paths:
+        if f.is_file():
+            click.echo(f"Applying template to {f.as_posix()}")
+            apply_code_template(code_file=f, prompt=prompt)
 if __name__ == '__main__':
     cli()
