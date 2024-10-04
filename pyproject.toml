@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lazy-dev-ai"
-version = "0.2.2"
+version = "0.2.3"
 description = "A simple tool for applying chatgpt prompts to code"
 authors = ["Robert Sivilli <robert.sivilli@gmail.com>"]
 readme = "README.md"
